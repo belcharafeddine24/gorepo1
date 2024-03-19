@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -37,18 +38,27 @@ func handleCreatePaymentIntent(writer http.ResponseWriter, request *http.Request
 		return
 	}
 	fmt.Println("the req is correct ")
-}
+	var req struct {
+		ProductId string `json:"product_id"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Address1  string `json:"address_1"`
+		Address2  string `json:"address_2"`
+		City      string `json:"city"`
+		State     string `json:"state"`
+		Zip       string `json:"zip"`
+		Country   string `json:"country"`
+	}
+	err := json.NewDecoder(request.Body).Decode(&req)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(req.FirstName)
+	fmt.Println(req.LastName)
+	fmt.Println(req.City)
+	fmt.Println(req.State)
 
-var req struct {
-	ProductId string `json:"product_id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Address1  string `json:"address_1"`
-	Address2  string `json:"address_2"`
-	City      string `json:"city"`
-	State     string `json:"state"`
-	Zip       string `json:"zip"`
-	Country   string `json:"country"`
 }
 
 func handleHealth(writer http.ResponseWriter, request *http.Request) {
